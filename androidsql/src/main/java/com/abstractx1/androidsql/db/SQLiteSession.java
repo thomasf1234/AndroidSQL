@@ -67,7 +67,7 @@ public class SQLiteSession extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
             ArrayList<Schema> newSchemasOrdered = new ArrayList<>();
-
+            System.out.println(String.format("oldVersion: %d, newVersion %d", oldVersion, newVersion));
             Schema _schema = schema;
             while (_schema.getDbVersion() != oldVersion) {
                 newSchemasOrdered.add(_schema);
@@ -76,6 +76,7 @@ public class SQLiteSession extends SQLiteOpenHelper {
             Collections.reverse(newSchemasOrdered);
 
             for (Schema newSchema : newSchemasOrdered) {
+                System.out.println(String.format("Running the upgrades for newSchema version %d", newSchema.dbVersion));
                 newSchema.upgradeFromPrevious(db);
             }
         }

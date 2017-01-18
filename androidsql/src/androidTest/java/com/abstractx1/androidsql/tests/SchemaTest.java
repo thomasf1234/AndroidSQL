@@ -1,16 +1,25 @@
 package com.abstractx1.androidsql.tests;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.abstractx1.androidsql.BaseInstrumentedTest;
+import com.abstractx1.androidsql.db.SQLiteSession;
+import com.abstractx1.androidsql.db.Schema;
+import com.abstractx1.androidsql.schemas.TestSchemaV2;
+import com.abstractx1.androidsql.schemas.TestSchemaV3;
+import com.abstractx1.androidsql.schemas.TestSchemaV4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,36 +33,101 @@ import static org.junit.Assert.assertNotNull;
 public class SchemaTest extends BaseInstrumentedTest {
     @Test
     public void testSchemaCreation() {
+        List<String> tableNames = getTableNames();
+        List<String> expectedTableNames = Arrays.asList("projects");
+        assertEquals(true, listEqualsNoOrder(expectedTableNames, tableNames));
+
+        List<String> actualColumns = getColumnsNames("projects");
+        List<String> expectedColumns = Arrays.asList("id", "name", "created_at");
+        assertEquals(true, listEqualsNoOrder(expectedColumns, actualColumns));
+    }
+
+    @Test
+    public void testSchemaSingleUpgrade() {
+        testSchemaCreation();
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Schema newSchema = new TestSchemaV2();
+        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+
+        List<String> tableNames = getTableNames();
+        List<String> expectedTableNames = Arrays.asList("projects");
+        assertEquals(true, listEqualsNoOrder(expectedTableNames, tableNames));
+
+        List<String> actualColumns = getColumnsNames("projects");
+        List<String> expectedColumns = Arrays.asList("id", "name", "description", "created_at");
+        assertEquals(true, listEqualsNoOrder(expectedColumns, actualColumns));
+    }
+
+    @Test
+    public void testSchemaDoubleUpgrade() {
+        testSchemaCreation();
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Schema newSchema = new TestSchemaV3();
+        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+
+        List<String> tableNames = getTableNames();
+        List<String> expectedTableNames = Arrays.asList("projects");
+        assertEquals(true, listEqualsNoOrder(expectedTableNames, tableNames));
+
+        List<String> actualColumns = getColumnsNames("projects");
+        List<String> expectedColumns = Arrays.asList("id", "name", "description", "number", "created_at");
+        assertEquals(true, listEqualsNoOrder(expectedColumns, actualColumns));
+    }
+
+    @Test
+    public void testSchemaSingleUpgradeReplaceTable() {
+        testSchemaCreation();
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Schema newSchema = new TestSchemaV4();
+        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+
+        List<String> tableNames = getTableNames();
+        List<String> expectedTableNames = Arrays.asList("projects");
+        assertEquals(true, listEqualsNoOrder(expectedTableNames, tableNames));
+
+        List<String> actualColumns = getColumnsNames("projects");
+        List<String> expectedColumns = Arrays.asList("id", "name", "number", "created_at");
+        assertEquals(true, listEqualsNoOrder(expectedColumns, actualColumns));
+    }
+
+    public List<String> getTableNames() {
         Cursor cursor = getSqLiteSession().query("SELECT name FROM sqlite_master WHERE type ='table'");
-        assertNotNull(cursor);
         List<String> tableNames = new ArrayList<>();
 
-        do {
-            tableNames.add(cursor.getString(0));
-        } while (cursor.moveToNext());
-        cursor.close();
-        assertEquals(true, tableNames.contains("projects"));
+        if (cursor != null) {
+            do {
+                tableNames.add(cursor.getString(0));
+            } while (cursor.moveToNext());
 
+            cursor.close();
+        }
+
+        tableNames.remove("android_metadata");
+        tableNames.remove("sqlite_sequence");
+
+        return tableNames;
+    }
+
+    public List<String> getColumnsNames(String tableName) {
         List<String> actualColumns = new ArrayList<>();
-        cursor = getSqLiteSession().query("PRAGMA table_info(projects)");
+
+        Cursor cursor = getSqLiteSession().query(String.format("PRAGMA table_info(%s)", tableName));
         do {
             actualColumns.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
         } while (cursor.moveToNext());
         cursor.close();
 
-        ArrayList<String> expectedColumns = new ArrayList<>();
-        expectedColumns.add("id");
-        expectedColumns.add("name");
-        expectedColumns.add("created_at");
-
-        Collections.sort(expectedColumns);
-        Collections.sort(actualColumns);
-        assertEquals(true, actualColumns.equals(expectedColumns));
-
-
-        assertEquals(true, tableNames.contains("tasks"));
-        assertEquals(true, tableNames.contains("sub_tasks"));
-
-        cursor.close();
+        return  actualColumns;
     }
+
+    public static <T> boolean listEqualsNoOrder(List<T> l1, List<T> l2) {
+        final Set<T> s1 = new HashSet<>(l1);
+        final Set<T> s2 = new HashSet<>(l2);
+
+        return s1.equals(s2);
+    }
+
 }

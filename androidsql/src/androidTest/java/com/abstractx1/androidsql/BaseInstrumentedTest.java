@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(AndroidJUnit4.class)
 public class BaseInstrumentedTest {
-    private static final String DB_NAME = "com.abstractx1.sqlitemodel.test.db";
+    protected static final String DB_NAME = "com.abstractx1.sqlitemodel.test.db";
     protected SQLiteSession sqLiteSession;
 
     @Before

@@ -8,10 +8,10 @@ import com.abstractx1.androidsql.db.Schema;
  * Created by tfisher on 17/01/2017.
  */
 
-public class TestSchemaV1 extends Schema {
+public class TestSchemaV3 extends Schema {
     @Override
     public void setDbVersion() {
-        this.dbVersion = 1;
+        this.dbVersion = 3;
     }
 
     @Override
@@ -20,16 +20,20 @@ public class TestSchemaV1 extends Schema {
                 "CREATE TABLE projects(\n" +
                         "   id INTEGER PRIMARY KEY AUTOINCREMENT     NOT NULL,\n" +
                         "   name           TEXT    NOT NULL,\n" +
+                        "   description    TEXT,\n" +
+                        "   number    INTEGER,\n" +
                         "   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +
                         ");"
         };
     }
 
     @Override
-    public void upgradeFromPrevious(SQLiteDatabase db) {}
+    public void upgradeFromPrevious(SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE projects ADD COLUMN number INTEGER;");
+    }
 
     @Override
     public Schema previousSchema() {
-        return null;
+        return new TestSchemaV2();
     }
 }
