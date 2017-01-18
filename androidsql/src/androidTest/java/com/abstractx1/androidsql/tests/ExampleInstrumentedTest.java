@@ -26,17 +26,4 @@ public class ExampleInstrumentedTest extends BaseInstrumentedTest {
 
         assertEquals("com.abstractx1.androidsql.test", appContext.getPackageName());
     }
-
-    @Test
-    public void testInsert() {
-        Context appContext = InstrumentationRegistry.getTargetContext();
-        int id = getSqLiteSession().insert("INSERT INTO projects (name) VALUES ('MyOther''s Project')");
-        Cursor cursor = getSqLiteSession().query("SELECT COUNT(*) FROM projects");
-        assertEquals(1, cursor.getInt(0));
-        cursor.close();
-        cursor = getSqLiteSession().query(String.format("SELECT * FROM projects WHERE id = %d", id));
-        assertNotNull(cursor);
-        assertEquals("MyOther's Project", cursor.getString(cursor.getColumnIndex("name")));
-        cursor.close();
-    }
 }

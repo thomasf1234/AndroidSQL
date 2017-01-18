@@ -45,6 +45,7 @@ public class SQLiteSession extends SQLiteOpenHelper {
         }
     }
 
+    //synchronized here is required to ensure correct id is retrieved.
     public synchronized int insert(String sql) {
         exec(sql);
         Cursor cursor = query("SELECT LAST_INSERT_ROWID() AS id");

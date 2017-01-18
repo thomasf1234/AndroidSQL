@@ -20,14 +20,14 @@ public class ModelFactory {
         String selectQuery = SqlQueryFactory.findById(modelTableInfo, id);
 
         Cursor cursor = sqLiteSession.query(selectQuery);
-        Object model = null;
 
-        if (cursor != null) {
-            model = build(modelTableInfo, cursor);
+        if (cursor == null) {
+            return null;
+        } else {
+            Object model = build(modelTableInfo, cursor);
             cursor.close();
+            return  model;
         }
-
-        return model;
     }
 
     //TODO : boolean flag if connection required.
