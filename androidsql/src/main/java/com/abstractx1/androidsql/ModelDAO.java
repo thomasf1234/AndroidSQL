@@ -24,27 +24,25 @@ public class ModelDAO {
     }
 
     public BaseModel findById(Class<? extends BaseModel> modelClazz, int id) throws NoSuchFieldException, InstantiationException, IllegalAccessException, ParseException {
-        String tableName = modelClazz.getAnnotation(TableName.class).value();
+        String tableName = getTableName(modelClazz);
         String selectQuery = SqlQueryFactory.buildFindById(tableName, id);
         Cursor cursor = getSqLiteDAO().query(selectQuery);
 
         if (cursor == null) {
             return null;
         } else {
-            BaseModel model = ModelFactory.build(modelClazz, getColumnInfo(modelClazz), cursor);
+            BaseModel model = ModelFactory.build(modelClazz, getColumnInfo(tableName), cursor);
             cursor.close();
             return  model;
         }
     }
 
-    protected void populateModelTableInfoMap() {
-
+    protected String getTableName(Class<? extends BaseModel>  modelClazz) {
+        return modelClazz.getAnnotation(TableName.class).value();
     }
 
-    protected ColumnInfo getColumnInfo(Class<? extends BaseModel> modelClazz) {
-        TableName tableNameAnnotation = modelClazz.getAnnotation(TableName.class);
-
-        return tableInfo.getColumnInfo(tableNameAnnotation.value());
+    protected ColumnInfo getColumnInfo(String tableName) {
+        return tableInfo.getColumnInfo(tableName);
     }
 
     protected SQLiteDAO getSqLiteDAO() {
