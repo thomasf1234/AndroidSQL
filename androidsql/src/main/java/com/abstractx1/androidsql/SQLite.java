@@ -7,6 +7,9 @@ import java.text.SimpleDateFormat;
  */
 
 public final class SQLite {
+    public static final String TABLE_SQLITE_MASTER = "sqlite_master";
+    public static final String TABLE_SQLITE_MASTER_COLUMN_NAME = "name";
+
     public static final String TABLE_INFO_COLUMN_NAME = "name";
     public static final String TABLE_INFO_COLUMN_TYPE = "type";
 

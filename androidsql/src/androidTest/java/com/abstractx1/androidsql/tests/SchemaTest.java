@@ -6,7 +6,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.abstractx1.androidsql.BaseInstrumentedTest;
-import com.abstractx1.androidsql.db.SQLiteSession;
+import com.abstractx1.androidsql.db.SQLiteDAO;
 import com.abstractx1.androidsql.db.Schema;
 import com.abstractx1.androidsql.schemas.TestSchemaV2;
 import com.abstractx1.androidsql.schemas.TestSchemaV3;
@@ -48,7 +48,7 @@ public class SchemaTest extends BaseInstrumentedTest {
 
         Context appContext = InstrumentationRegistry.getTargetContext();
         Schema newSchema = new TestSchemaV2();
-        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+        sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, newSchema);
 
         List<String> tableNames = getTableNames();
         List<String> expectedTableNames = Arrays.asList("projects");
@@ -65,7 +65,7 @@ public class SchemaTest extends BaseInstrumentedTest {
 
         Context appContext = InstrumentationRegistry.getTargetContext();
         Schema newSchema = new TestSchemaV3();
-        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+        sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, newSchema);
 
         List<String> tableNames = getTableNames();
         List<String> expectedTableNames = Arrays.asList("projects");
@@ -82,7 +82,7 @@ public class SchemaTest extends BaseInstrumentedTest {
 
         Context appContext = InstrumentationRegistry.getTargetContext();
         Schema newSchema = new TestSchemaV4();
-        sqLiteSession = new SQLiteSession(appContext, DB_NAME, newSchema);
+        sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, newSchema);
 
         List<String> tableNames = getTableNames();
         List<String> expectedTableNames = Arrays.asList("projects");
@@ -94,7 +94,7 @@ public class SchemaTest extends BaseInstrumentedTest {
     }
 
     public List<String> getTableNames() {
-        Cursor cursor = getSqLiteSession().query("SELECT name FROM sqlite_master WHERE type ='table'");
+        Cursor cursor = getSqLiteDAO().query("SELECT name FROM sqlite_master WHERE type ='table'");
         List<String> tableNames = new ArrayList<>();
 
         if (cursor != null) {
@@ -114,7 +114,7 @@ public class SchemaTest extends BaseInstrumentedTest {
     public List<String> getColumnsNames(String tableName) {
         List<String> actualColumns = new ArrayList<>();
 
-        Cursor cursor = getSqLiteSession().query(String.format("PRAGMA table_info(%s)", tableName));
+        Cursor cursor = getSqLiteDAO().query(String.format("PRAGMA table_info(%s)", tableName));
         do {
             actualColumns.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
         } while (cursor.moveToNext());

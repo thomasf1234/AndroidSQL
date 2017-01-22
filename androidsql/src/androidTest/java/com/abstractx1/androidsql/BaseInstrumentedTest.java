@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.abstractx1.androidsql.db.SQLiteSession;
+import com.abstractx1.androidsql.db.SQLiteDAO;
 import com.abstractx1.androidsql.db.Schema;
 import com.abstractx1.androidsql.schemas.TestSchemaV1;
 
@@ -22,16 +22,16 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class BaseInstrumentedTest {
     protected static final String DB_NAME = "com.abstractx1.sqlitemodel.test.db";
-    protected SQLiteSession sqLiteSession;
+    protected SQLiteDAO sqLiteDAO;
 
     @Before
     public void setUp() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
         appContext.deleteDatabase(DB_NAME);
         Schema schema = new TestSchemaV1();
-        sqLiteSession = new SQLiteSession(appContext, DB_NAME, schema);
-        getSqLiteSession().initializeDatabase();
+        this.sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, schema);
+        getSqLiteDAO().initializeDatabase();
     }
 
-    protected SQLiteSession getSqLiteSession() { return sqLiteSession; }
+    protected SQLiteDAO getSqLiteDAO() { return sqLiteDAO; }
 }

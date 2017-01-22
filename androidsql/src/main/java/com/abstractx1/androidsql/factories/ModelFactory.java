@@ -2,9 +2,9 @@ package com.abstractx1.androidsql.factories;
 
 import android.database.Cursor;
 
+import com.abstractx1.androidsql.BaseModel;
+import com.abstractx1.androidsql.ColumnInfo;
 import com.abstractx1.androidsql.SQLite;
-import com.abstractx1.androidsql.db.SQLiteSession;
-import com.abstractx1.androidsql.ModelTableInfo;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -14,39 +14,25 @@ import java.util.Date;
 /**
  * Created by tfisher on 29/12/2016.
  */
-
+//https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
 public class ModelFactory {
-    public static Object findById(SQLiteSession sqLiteSession, ModelTableInfo modelTableInfo, int id) throws NoSuchFieldException, InstantiationException, ParseException, IllegalAccessException {
-        String selectQuery = SqlQueryFactory.findById(modelTableInfo, id);
-
-        Cursor cursor = sqLiteSession.query(selectQuery);
-
-        if (cursor == null) {
-            return null;
-        } else {
-            Object model = build(modelTableInfo, cursor);
-            cursor.close();
-            return  model;
-        }
-    }
-
     //TODO : boolean flag if connection required.
-    public static Object build(ModelTableInfo modelTableInfo, Cursor cursor) throws IllegalAccessException, InstantiationException, NoSuchFieldException, ParseException {
-        Object model = modelTableInfo.getModelClass().newInstance();
+    public static BaseModel build(Class<? extends BaseModel> modelClazz, ColumnInfo columnInfo, Cursor cursor) throws IllegalAccessException, InstantiationException, NoSuchFieldException, ParseException {
+        BaseModel model = modelClazz.newInstance();
 
-        for (String column : modelTableInfo.getColumns()) {
-            String columnTypeName = modelTableInfo.getColumnTypeName(column);
+        for (String columnName : columnInfo.getColumnNames()) {
+            String columnType = columnInfo.getTypeName(columnName);
 
-            if (columnTypeName.equals(SQLite.TYPENAME_INTEGER)) {
-                setIntField(model, column, cursor.getInt(cursor.getColumnIndex(column)));
-            } else if (columnTypeName.equals(SQLite.TYPENAME_BOOLEAN)) {
-                setBoolField(model, column, cursor.getInt(cursor.getColumnIndex(column)));
-            } else if (columnTypeName.equals(SQLite.TYPENAME_TEXT)) {
-                setStringField(model, column, cursor.getString(cursor.getColumnIndex(column)));
-            } else if (columnTypeName.equals(SQLite.TYPENAME_VARCHAR_255)) {
-                setStringField(model, column, cursor.getString(cursor.getColumnIndex(column)));
-            } else if (columnTypeName.equals(SQLite.TYPENAME_DATETIME)) {
-                setDateField(model, column, cursor.getString(cursor.getColumnIndex(column)));
+            if (columnType.equals(SQLite.TYPENAME_INTEGER)) {
+                setIntField(model, columnName, cursor.getInt(cursor.getColumnIndex(columnName)));
+            } else if (columnType.equals(SQLite.TYPENAME_BOOLEAN)) {
+                setBoolField(model, columnName, cursor.getInt(cursor.getColumnIndex(columnName)));
+            } else if (columnType.equals(SQLite.TYPENAME_TEXT)) {
+                setStringField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
+            } else if (columnType.equals(SQLite.TYPENAME_VARCHAR_255)) {
+                setStringField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
+            } else if (columnType.equals(SQLite.TYPENAME_DATETIME)) {
+                setDateField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
             }
         }
 
