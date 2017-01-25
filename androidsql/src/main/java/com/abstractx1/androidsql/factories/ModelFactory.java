@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import com.abstractx1.androidsql.BaseModel;
 import com.abstractx1.androidsql.ColumnInfo;
-import com.abstractx1.androidsql.ColumnName;
+import com.abstractx1.androidsql.Column;
 import com.abstractx1.androidsql.SQLite;
 
 import java.lang.reflect.Field;
@@ -154,8 +154,8 @@ public class ModelFactory {
     private static Field findFieldForColumnName(Class<? extends BaseModel> modelClazz, String columnName) {
         Field[] fields = modelClazz.getDeclaredFields();
         for (Field field : fields) {
-            ColumnName columnNameAnnotation = field.getAnnotation(ColumnName.class);
-            if (columnNameAnnotation != null && columnNameAnnotation.value().equals(columnName)) {
+            Column columnAnnotation = field.getAnnotation(Column.class);
+            if (columnAnnotation != null && columnAnnotation.name().equals(columnName)) {
                 return field;
             }
         }

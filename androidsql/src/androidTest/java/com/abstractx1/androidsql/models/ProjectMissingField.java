@@ -1,7 +1,7 @@
 package com.abstractx1.androidsql.models;
 
 import com.abstractx1.androidsql.BaseModel;
-import com.abstractx1.androidsql.ColumnName;
+import com.abstractx1.androidsql.Column;
 import com.abstractx1.androidsql.TableName;
 
 import java.util.Date;
@@ -12,8 +12,8 @@ import java.util.Date;
 
 @TableName("projects")
 public class ProjectMissingField extends BaseModel {
-    @ColumnName("id") private long id;
-    @ColumnName("created_at") private Date createdAt;
+    @Column(name = "id", readOnly = true) private long id;
+    @Column(name = "created_at", readOnly = true) private Date createdAt;
 
     public ProjectMissingField() {}
 

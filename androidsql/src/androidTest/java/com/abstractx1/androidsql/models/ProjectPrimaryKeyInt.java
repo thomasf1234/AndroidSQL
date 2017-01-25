@@ -1,7 +1,7 @@
 package com.abstractx1.androidsql.models;
 
 import com.abstractx1.androidsql.BaseModel;
-import com.abstractx1.androidsql.ColumnName;
+import com.abstractx1.androidsql.Column;
 import com.abstractx1.androidsql.TableName;
 
 import java.util.Date;
@@ -12,9 +12,9 @@ import java.util.Date;
 
 @TableName("projects")
 public class ProjectPrimaryKeyInt extends BaseModel {
-    @ColumnName("id") private int id;
-    @ColumnName("name") private String name;
-    @ColumnName("created_at") private Date createdAt;
+    @Column(name = "id", readOnly = true) private int id;
+    @Column(name = "name") private String name;
+    @Column(name = "created_at", readOnly = true) private Date createdAt;
 
     public ProjectPrimaryKeyInt() {}
 

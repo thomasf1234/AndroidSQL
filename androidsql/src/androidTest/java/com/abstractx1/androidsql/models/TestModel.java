@@ -1,7 +1,7 @@
 package com.abstractx1.androidsql.models;
 
 import com.abstractx1.androidsql.BaseModel;
-import com.abstractx1.androidsql.ColumnName;
+import com.abstractx1.androidsql.Column;
 import com.abstractx1.androidsql.TableName;
 
 import java.util.Date;
@@ -12,32 +12,32 @@ import java.util.Date;
 
 @TableName("test_table")
 public class TestModel extends BaseModel {
-    @ColumnName("id") private long id;
-    @ColumnName("byte_field") private byte byteField;
-    @ColumnName("short_field") private short shortField;
-    @ColumnName("int_field_a") private int intFieldA;
-    @ColumnName("int_field_b") private int intFieldB;
-    @ColumnName("long_field") private long longField;
+    @Column(name = "id", readOnly = true) private long id;
+    @Column(name = "byte_field") private byte byteField;
+    @Column(name = "short_field") private short shortField;
+    @Column(name = "int_field_a") private int intFieldA;
+    @Column(name = "int_field_b") private int intFieldB;
+    @Column(name = "long_field") private long longField;
 
-    @ColumnName("string_field_a") private String stringFieldA;
-    @ColumnName("string_field_b") private String stringFieldB;
-    @ColumnName("string_field_c") private String stringFieldC;
-    @ColumnName("string_field_d") private String stringFieldD;
-    @ColumnName("string_field_e") private String stringFieldE;
-    @ColumnName("string_field_f") private String stringFieldF;
-    @ColumnName("string_field_g") private String stringFieldG;
-    @ColumnName("string_field_h") private String stringFieldH;
+    @Column(name = "string_field_a") private String stringFieldA;
+    @Column(name = "string_field_b") private String stringFieldB;
+    @Column(name = "string_field_c") private String stringFieldC;
+    @Column(name = "string_field_d") private String stringFieldD;
+    @Column(name = "string_field_e") private String stringFieldE;
+    @Column(name = "string_field_f") private String stringFieldF;
+    @Column(name = "string_field_g") private String stringFieldG;
+    @Column(name = "string_field_h") private String stringFieldH;
 
-    @ColumnName("byte_array_field") private byte[] byteArrayField;
+    @Column(name = "byte_array_field") private byte[] byteArrayField;
 
-    @ColumnName("double_field_a") private double doubleFieldA;
-    @ColumnName("double_field_b") private double doubleFieldB;
-    @ColumnName("double_field_c") private double doubleFieldC;
-    @ColumnName("float_field") private float floatField;
+    @Column(name = "double_field_a") private double doubleFieldA;
+    @Column(name = "double_field_b") private double doubleFieldB;
+    @Column(name = "double_field_c") private double doubleFieldC;
+    @Column(name = "float_field") private float floatField;
 
-    @ColumnName("boolean_field") private boolean booleanField;
-    @ColumnName("date_field") private Date dateField;
-    @ColumnName("datetime_field") private Date dateTimeField;
+    @Column(name = "boolean_field") private boolean booleanField;
+    @Column(name = "date_field") private Date dateField;
+    @Column(name = "datetime_field") private Date dateTimeField;
 
     public TestModel() {}
 

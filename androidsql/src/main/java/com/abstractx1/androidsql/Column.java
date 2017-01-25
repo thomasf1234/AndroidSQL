@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD) // on class level
 @Retention(RetentionPolicy.RUNTIME) // not needed at runtime
-public @interface ColumnName {
-    String value();
+public @interface Column {
+    String name();
+    boolean readOnly() default false;
 }
