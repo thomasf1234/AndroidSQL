@@ -1,11 +1,16 @@
 package com.abstractx1.androidsql.tests;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.abstractx1.androidsql.BaseInstrumentedTest;
 import com.abstractx1.androidsql.db.SQLiteDAO;
+import com.abstractx1.androidsql.db.Schema;
+import com.abstractx1.androidsql.schemas.TestSchemaV1;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,13 +28,21 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class SQLiteSessionTest extends BaseInstrumentedTest {
+    @Before
+    public void setUp() {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Schema schema = new TestSchemaV1();
+        this.sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, schema);
+        sqLiteDAO.initializeDatabase();
+    }
+
     @Test
     public void testInsert() {
-        int id = (int) getSqLiteDAO().insert("INSERT INTO projects (name) VALUES ('MyOther''s Project')");
-        Cursor cursor = getSqLiteDAO().query("SELECT COUNT(*) FROM projects");
+        int id = (int) sqLiteDAO.insert("INSERT INTO projects (name) VALUES ('MyOther''s Project')");
+        Cursor cursor = sqLiteDAO.query("SELECT COUNT(*) FROM projects");
         assertEquals(1, cursor.getInt(0));
         cursor.close();
-        cursor = getSqLiteDAO().query(String.format("SELECT * FROM projects WHERE id = %d", id));
+        cursor = sqLiteDAO.query(String.format("SELECT * FROM projects WHERE id = %d", id));
         assertNotNull(cursor);
         assertEquals("MyOther's Project", cursor.getString(cursor.getColumnIndex("name")));
         cursor.close();
@@ -37,9 +50,9 @@ public class SQLiteSessionTest extends BaseInstrumentedTest {
 
     @Test
     public void testInsertMultiThread() throws InterruptedException {
-        ThreadTest thread1 = new ThreadTest("Thread1", getSqLiteDAO());
-        ThreadTest thread2 = new ThreadTest("Thread2", getSqLiteDAO());
-        ThreadTest thread3 = new ThreadTest("Thread3", getSqLiteDAO());
+        ThreadTest thread1 = new ThreadTest("Thread1", sqLiteDAO);
+        ThreadTest thread2 = new ThreadTest("Thread2", sqLiteDAO);
+        ThreadTest thread3 = new ThreadTest("Thread3", sqLiteDAO);
         ThreadTest[] threadTests = new ThreadTest[]{thread1, thread2, thread3};
 
         for (ThreadTest threadTest : threadTests) {
@@ -52,7 +65,7 @@ public class SQLiteSessionTest extends BaseInstrumentedTest {
             for (Map.Entry<Integer, String> entry : threadTest.getProjectIdNameMap().entrySet()) {
                 int id = entry.getKey();
                 String name = entry.getValue();
-                Cursor cursor = getSqLiteDAO().query(String.format("SELECT name FROM projects WHERE id = %d", id));
+                Cursor cursor = sqLiteDAO.query(String.format("SELECT name FROM projects WHERE id = %d", id));
                 assertNotNull(cursor);
                 assertEquals(name, cursor.getString(cursor.getColumnIndex("name")));
                 cursor.close();

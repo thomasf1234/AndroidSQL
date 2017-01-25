@@ -11,12 +11,12 @@ import java.util.Date;
  */
 
 @TableName("projects")
-public class Project extends BaseModel {
-    @ColumnName("id") private long id;
+public class ProjectPrimaryKeyInt extends BaseModel {
+    @ColumnName("id") private int id;
     @ColumnName("name") private String name;
     @ColumnName("created_at") private Date createdAt;
 
-    public Project() {}
+    public ProjectPrimaryKeyInt() {}
 
     public long getId() {
         return id;

@@ -10,8 +10,9 @@ import com.abstractx1.androidsql.SQLite;
 import com.abstractx1.androidsql.TableInfo;
 import com.abstractx1.androidsql.db.SQLiteDAO;
 import com.abstractx1.androidsql.db.Schema;
-import com.abstractx1.androidsql.schemas.TestSchemaV2;
+import com.abstractx1.androidsql.schemas.TestSchemaV1;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,9 +30,17 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(AndroidJUnit4.class)
 public class TableInfoTest extends BaseInstrumentedTest {
+    @Before
+    public void setUp() {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        Schema schema = new TestSchemaV1();
+        this.sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, schema);
+        sqLiteDAO.initializeDatabase();
+    }
+
     @Test
     public void getColumnInfo() throws Exception {
-        TableInfo tableInfo = new TableInfo(getSqLiteDAO());
+        TableInfo tableInfo = new TableInfo(sqLiteDAO);
 
         assertEquals(null, tableInfo.getColumnInfo("unknown_table"));
 

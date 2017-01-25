@@ -11,18 +11,17 @@ import java.util.Date;
  */
 
 @TableName("projects")
-public class Project extends BaseModel {
+public class ProjectMissingField extends BaseModel {
     @ColumnName("id") private long id;
-    @ColumnName("name") private String name;
     @ColumnName("created_at") private Date createdAt;
 
-    public Project() {}
+    public ProjectMissingField() {}
 
     public long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 }

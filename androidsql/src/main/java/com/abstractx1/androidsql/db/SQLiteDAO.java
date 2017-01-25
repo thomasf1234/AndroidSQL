@@ -7,9 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
 
-
-import com.abstractx1.androidsql.TableInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 

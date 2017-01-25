@@ -11,18 +11,18 @@ import java.util.Date;
  */
 
 @TableName("projects")
-public class Project extends BaseModel {
+public class ProjectFieldIncorrectType extends BaseModel {
     @ColumnName("id") private long id;
-    @ColumnName("name") private String name;
+    @ColumnName("name") private int name;
     @ColumnName("created_at") private Date createdAt;
 
-    public Project() {}
+    public ProjectFieldIncorrectType() {}
 
     public long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 }

@@ -28,15 +28,10 @@ public abstract class BaseInstrumentedTest {
     protected SQLiteDAO sqLiteDAO;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUpDeleteDatabase() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
         appContext.deleteDatabase(DB_NAME);
-        Schema schema = new TestSchemaV1();
-        this.sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, schema);
-        getSqLiteDAO().initializeDatabase();
     }
-
-    protected SQLiteDAO getSqLiteDAO() { return sqLiteDAO; }
 
     public static <T> boolean listEqualsNoOrder(List<T> l1, List<T> l2) {
         final Set<T> s1 = new HashSet<>(l1);
