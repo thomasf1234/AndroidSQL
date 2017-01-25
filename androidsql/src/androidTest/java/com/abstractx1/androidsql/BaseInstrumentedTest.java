@@ -11,6 +11,10 @@ import com.abstractx1.androidsql.schemas.TestSchemaV1;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -19,8 +23,7 @@ import static org.junit.Assert.assertNotNull;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(AndroidJUnit4.class)
-public class BaseInstrumentedTest {
+public abstract class BaseInstrumentedTest {
     protected static final String DB_NAME = "com.abstractx1.sqlitemodel.test.db";
     protected SQLiteDAO sqLiteDAO;
 
@@ -34,4 +37,11 @@ public class BaseInstrumentedTest {
     }
 
     protected SQLiteDAO getSqLiteDAO() { return sqLiteDAO; }
+
+    public static <T> boolean listEqualsNoOrder(List<T> l1, List<T> l2) {
+        final Set<T> s1 = new HashSet<>(l1);
+        final Set<T> s2 = new HashSet<>(l2);
+
+        return s1.equals(s2);
+    }
 }

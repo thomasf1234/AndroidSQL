@@ -9,8 +9,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE) // on class level
+@Target(ElementType.FIELD) // on class level
 @Retention(RetentionPolicy.RUNTIME) // not needed at runtime
-public @interface TableName {
+public @interface ColumnName {
     String value();
 }

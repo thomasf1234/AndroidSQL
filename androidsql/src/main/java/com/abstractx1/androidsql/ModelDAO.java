@@ -23,7 +23,7 @@ public class ModelDAO {
         this.tableInfo = new TableInfo(getSqLiteDAO());
     }
 
-    public BaseModel findById(Class<? extends BaseModel> modelClazz, int id) throws NoSuchFieldException, InstantiationException, IllegalAccessException, ParseException {
+    public <T extends BaseModel> T findById(Class<T> modelClazz, int id) throws NoSuchFieldException, InstantiationException, IllegalAccessException, ParseException {
         String tableName = getTableName(modelClazz);
         String selectQuery = SqlQueryFactory.buildFindById(tableName, id);
         Cursor cursor = getSqLiteDAO().query(selectQuery);
@@ -31,21 +31,21 @@ public class ModelDAO {
         if (cursor == null) {
             return null;
         } else {
-            BaseModel model = ModelFactory.build(modelClazz, getColumnInfo(tableName), cursor);
+            T model = ModelFactory.build(modelClazz, getColumnInfo(tableName), cursor);
             cursor.close();
             return  model;
         }
     }
 
-    protected String getTableName(Class<? extends BaseModel>  modelClazz) {
+    private String getTableName(Class<? extends BaseModel>  modelClazz) {
         return modelClazz.getAnnotation(TableName.class).value();
     }
 
-    protected ColumnInfo getColumnInfo(String tableName) {
+    private ColumnInfo getColumnInfo(String tableName) {
         return tableInfo.getColumnInfo(tableName);
     }
 
-    protected SQLiteDAO getSqLiteDAO() {
+    private SQLiteDAO getSqLiteDAO() {
         return sqLiteDAO;
     }
 }

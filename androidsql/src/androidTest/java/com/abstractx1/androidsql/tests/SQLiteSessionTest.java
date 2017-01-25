@@ -20,30 +20,6 @@ import static org.junit.Assert.assertNotNull;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-class ThreadTest extends Thread {
-    private SQLiteDAO sqLiteDAO;
-    private Map<Integer,String> projectIdNameMap;
-    private String name;
-
-    public ThreadTest(String str, SQLiteDAO sqLiteDAO) {
-        super(str);
-        this.name = str;
-        this.sqLiteDAO = sqLiteDAO;
-        projectIdNameMap = new HashMap<>();
-    }
-
-    public void run() {
-        for (int i = 0; i < 100; i++) {
-            String projectName = String.format("%s_%d", name, i);
-            int id = (int) sqLiteDAO.insert(String.format("INSERT INTO projects (name) VALUES ('%s')", projectName));
-            projectIdNameMap.put(id, projectName);
-        }
-    }
-
-    public Map<Integer, String> getProjectIdNameMap() {
-        return projectIdNameMap;
-    }
-}
 
 @RunWith(AndroidJUnit4.class)
 public class SQLiteSessionTest extends BaseInstrumentedTest {
@@ -81,6 +57,31 @@ public class SQLiteSessionTest extends BaseInstrumentedTest {
                 assertEquals(name, cursor.getString(cursor.getColumnIndex("name")));
                 cursor.close();
             }
+        }
+    }
+
+    private class ThreadTest extends Thread {
+        private SQLiteDAO sqLiteDAO;
+        private Map<Integer,String> projectIdNameMap;
+        private String name;
+
+        public ThreadTest(String str, SQLiteDAO sqLiteDAO) {
+            super(str);
+            this.name = str;
+            this.sqLiteDAO = sqLiteDAO;
+            projectIdNameMap = new HashMap<>();
+        }
+
+        public void run() {
+            for (int i = 0; i < 100; i++) {
+                String projectName = String.format("%s_%d", name, i);
+                int id = (int) sqLiteDAO.insert(String.format("INSERT INTO projects (name) VALUES ('%s')", projectName));
+                projectIdNameMap.put(id, projectName);
+            }
+        }
+
+        public Map<Integer, String> getProjectIdNameMap() {
+            return projectIdNameMap;
         }
     }
 }

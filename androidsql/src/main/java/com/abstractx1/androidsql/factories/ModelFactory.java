@@ -4,6 +4,7 @@ import android.database.Cursor;
 
 import com.abstractx1.androidsql.BaseModel;
 import com.abstractx1.androidsql.ColumnInfo;
+import com.abstractx1.androidsql.ColumnName;
 import com.abstractx1.androidsql.SQLite;
 
 import java.lang.reflect.Field;
@@ -16,65 +17,141 @@ import java.util.Date;
  */
 //https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
 public class ModelFactory {
-    //TODO : boolean flag if connection required.
-    public static BaseModel build(Class<? extends BaseModel> modelClazz, ColumnInfo columnInfo, Cursor cursor) throws IllegalAccessException, InstantiationException, NoSuchFieldException, ParseException {
-        BaseModel model = modelClazz.newInstance();
+    public static <T extends BaseModel> T build(Class<T> modelClazz, ColumnInfo columnInfo, Cursor cursor) throws IllegalAccessException, InstantiationException, NoSuchFieldException, ParseException {
+        T model = modelClazz.newInstance();
 
         for (String columnName : columnInfo.getColumnNames()) {
             String columnType = columnInfo.getTypeName(columnName);
 
-            if (columnType.equals(SQLite.TYPENAME_INTEGER)) {
-                setIntField(model, columnName, cursor.getInt(cursor.getColumnIndex(columnName)));
-            } else if (columnType.equals(SQLite.TYPENAME_BOOLEAN)) {
-                setBoolField(model, columnName, cursor.getInt(cursor.getColumnIndex(columnName)));
-            } else if (columnType.equals(SQLite.TYPENAME_TEXT)) {
-                setStringField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
-            } else if (columnType.equals(SQLite.TYPENAME_VARCHAR_255)) {
-                setStringField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
-            } else if (columnType.equals(SQLite.TYPENAME_DATETIME)) {
-                setDateField(model, columnName, cursor.getString(cursor.getColumnIndex(columnName)));
+            Field field = findFieldForColumnName(modelClazz, columnName);
+            assert field != null;
+            boolean origAccessibilty = field.isAccessible();
+            field.setAccessible(true);
+
+            if (columnType.contains(SQLite.TYPENAME_INT)) {
+                if(columnType.equals(SQLite.TYPENAME_TINYINT)) {
+                    setByteField(model, field, columnName, cursor);
+                } else if(columnType.equals(SQLite.TYPENAME_SMALLINT)) {
+                    setShortField(model, field, columnName, cursor);
+                } else if(columnType.equals(SQLite.TYPENAME_MEDIUMINT)) {
+                    setIntField(model, field, columnName, cursor);
+                } else if(columnType.equals(SQLite.TYPENAME_INT)) {
+                    setIntField(model, field, columnName, cursor);
+                } else if(columnType.equals(SQLite.TYPENAME_BIGINT)) {
+                    setLongField(model, field, columnName, cursor);
+                } else {
+                    setLongField(model, field, columnName, cursor);
+                }
             }
+            else if (columnType.contains(SQLite.TYPENAME_BLOB) || columnType.isEmpty()) {
+                setBytesField(model, field, columnName, cursor);
+            }
+            else if(columnType.contains("REA") || columnType.contains("FLOA") || columnType.contains("DOUB")) {
+                if (columnType.equals(SQLite.TYPENAME_FLOAT)) {
+                    setFloatField(model, field, columnName, cursor);
+                } else {
+                    setDoubleField(model, field, columnName, cursor);
+                }
+            }
+            else if(columnType.contains("CHAR") || columnType.contains("CLOB") || columnType.contains("TEXT")) {
+                setStringField(model, field, columnName, cursor);
+            }
+            else {
+                if (columnType.equals(SQLite.TYPENAME_DATE)) {
+                    setDateField(model, field, columnName, cursor);
+                } else if (columnType.equals(SQLite.TYPENAME_DATETIME)) {
+                    setDateTimeField(model, field, columnName, cursor);
+                } else if (columnType.equals(SQLite.TYPENAME_BOOLEAN)) {
+                    setBoolField(model, field, columnName, cursor);
+                }
+            }
+
+            field.setAccessible(origAccessibilty);
         }
 
         return model;
     }
 
-    private static void setIntField(Object object, String fieldName, int value)
+    private static void setByteField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws NoSuchFieldException, IllegalAccessException {
-        Field field = getField(object.getClass(), fieldName);
-        field.setInt(object, value);
+        byte value = (byte) cursor.getInt(cursor.getColumnIndex(columnName));
+        field.setByte(model, value);
     }
 
-    private static void setBoolField(Object object, String fieldName, int value)
+    private static void setShortField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws NoSuchFieldException, IllegalAccessException {
-        Field field = getField(object.getClass(), fieldName);
-        boolean bool = value > 0;
-        field.setBoolean(object, bool);
+        short value = cursor.getShort(cursor.getColumnIndex(columnName));
+        field.setShort(model, value);
     }
 
-    private static void setStringField(Object object, String fieldName, String value)
+    private static void setIntField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws NoSuchFieldException, IllegalAccessException {
-        Field field = getField(object.getClass(), fieldName);
-        field.set(object, value);
+        int value = cursor.getInt(cursor.getColumnIndex(columnName));
+        field.setInt(model, value);
     }
 
-    private static void setDateField(Object object, String fieldName, String value)
+    private static void setLongField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        long value = cursor.getLong(cursor.getColumnIndex(columnName));
+        field.setLong(model, value);
+    }
+
+    private static void setBytesField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        byte[] value = cursor.getBlob(cursor.getColumnIndex(columnName));
+        field.set(model, value);
+    }
+
+    private static void setFloatField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        float value = cursor.getFloat(cursor.getColumnIndex(columnName));
+        field.setFloat(model, value);
+    }
+
+    private static void setDoubleField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        double value = cursor.getDouble(cursor.getColumnIndex(columnName));
+        field.setDouble(model, value);
+    }
+
+    private static void setStringField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        String value = cursor.getString(cursor.getColumnIndex(columnName));
+        field.set(model, value);
+    }
+
+    private static void setDateField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws NoSuchFieldException, IllegalAccessException, ParseException {
-        Field field = getField(object.getClass(), fieldName);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date date = format.parse(value);
-        field.set(object, date);
+        String rawValue = cursor.getString(cursor.getColumnIndex(columnName));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date value = format.parse(rawValue);
+        field.set(model, value);
     }
 
-    public static Field getField(Class<?> type, String fieldName) throws NoSuchFieldException {
-        for (Class<?> clazz = type; clazz != null; clazz = clazz.getSuperclass()) {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.getName().equals(fieldName)) {
-                    return field;
-                }
+    private static void setDateTimeField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException, ParseException {
+        String rawValue = cursor.getString(cursor.getColumnIndex(columnName));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date value = format.parse(rawValue);
+        field.set(model, value);
+    }
+
+    private static void setBoolField(BaseModel model, Field field, String columnName, Cursor cursor)
+            throws NoSuchFieldException, IllegalAccessException {
+        int rawValue = cursor.getInt(cursor.getColumnIndex(columnName));
+        boolean value = rawValue > 0;
+        field.setBoolean(model, value);
+    }
+
+    private static Field findFieldForColumnName(Class<? extends BaseModel> modelClazz, String columnName) {
+        Field[] fields = modelClazz.getDeclaredFields();
+        for (Field field : fields) {
+            ColumnName columnNameAnnotation = field.getAnnotation(ColumnName.class);
+            if (columnNameAnnotation != null && columnNameAnnotation.value().equals(columnName)) {
+                return field;
             }
         }
 
-        throw new NoSuchFieldException();
+        return null;
     }
 }
