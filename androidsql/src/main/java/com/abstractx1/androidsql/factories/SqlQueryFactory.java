@@ -25,9 +25,16 @@ public class SqlQueryFactory extends Factory {
             } else {
                 String typeName = columnInfo.getTypeName(columnName);
                 boolean origAccessibility = field.isAccessible();
-                field.setAccessible(true);
-                Object fieldValue = field.get(model);
-                field.setAccessible(origAccessibility);
+                Object fieldValue;
+
+                try {
+                    field.setAccessible(true);
+                    fieldValue = field.get(model);
+                } catch (IllegalAccessException e) {
+                    throw e;
+                } finally {
+                    field.setAccessible(origAccessibility);
+                }
 
                 if (fieldValue == null) {
                     continue;

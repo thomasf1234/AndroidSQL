@@ -30,7 +30,10 @@ public class ModelFactory extends Factory {
             field.setAccessible(true);
 
             try {
-                if (columnType.contains(SQLite.TYPENAME_INT)) {
+                if (cursor.isNull(cursor.getColumnIndex(columnName))) {
+                    field.set(model, null);
+                }
+                else if (columnType.contains(SQLite.TYPENAME_INT)) {
                     if(columnType.equals(SQLite.TYPENAME_TINYINT)) {
                         setByteField(model, field, columnName, cursor);
                     } else if(columnType.equals(SQLite.TYPENAME_SMALLINT)) {
@@ -127,6 +130,7 @@ public class ModelFactory extends Factory {
             throws IllegalAccessException, ParseException {
         String rawValue = cursor.getString(cursor.getColumnIndex(columnName));
         SimpleDateFormat format = new SimpleDateFormat(SQLite.DATE_FORMAT);
+        format.setTimeZone(TimeZone.getTimeZone(SQLite.GMT));
         Date value = format.parse(rawValue);
         field.set(model, value);
     }

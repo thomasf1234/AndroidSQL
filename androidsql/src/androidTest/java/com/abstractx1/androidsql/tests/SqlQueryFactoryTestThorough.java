@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.abstractx1.androidsql.BaseInstrumentedTest;
+import com.abstractx1.androidsql.ModelDAO;
 import com.abstractx1.androidsql.TableInfo;
 import com.abstractx1.androidsql.db.SQLiteDAO;
 import com.abstractx1.androidsql.db.Schema;
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
@@ -43,6 +45,10 @@ public class SqlQueryFactoryTestThorough extends BaseInstrumentedTest {
         try {
             String sql = SqlQueryFactory.buildInsert(testModel, tableInfo.getColumnInfo(testModel.getTableName()));
             sqLiteDAO.insert(sql);
+            ModelDAO modelDAO = new ModelDAO(InstrumentationRegistry.getTargetContext(), DB_NAME, new TestSchemaAllTypesV1());
+            TestModel testModel1 = modelDAO.findById(TestModel.class, 1);
+            assertEquals((byte) 0x7F, testModel1.getByteField());
+            assertEquals(false, testModel1.getBooleanField());
         } catch (Exception e) {
             fail(Log.getStackTraceString(e));
         }
