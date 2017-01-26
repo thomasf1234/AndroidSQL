@@ -128,4 +128,8 @@ public class TestModel extends BaseModel {
     public Date getDateTimeField() {
         return dateTimeField;
     }
+
+    public void setByteField(byte byteField) {
+        this.byteField = byteField;
+    }
 }

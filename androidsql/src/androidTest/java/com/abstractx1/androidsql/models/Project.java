@@ -14,7 +14,7 @@ import java.util.Date;
 public class Project extends BaseModel {
     @Column(name = "id", readOnly = true) private long id;
     @Column(name = "name") private String name;
-    @Column(name = "created_at") private Date createdAt;
+    @Column(name = "created_at", readOnly = true) private Date createdAt;
 
     public Project() {}
 
@@ -24,5 +24,9 @@ public class Project extends BaseModel {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

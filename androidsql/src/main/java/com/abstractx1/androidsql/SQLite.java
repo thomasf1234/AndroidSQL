@@ -1,10 +1,17 @@
 package com.abstractx1.androidsql;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by tfisher on 04/01/2017.
  */
 
 public final class SQLite {
+    public static final String GMT = "GMT";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
+
     public static final String TABLE_SQLITE_MASTER = "sqlite_master";
     public static final String TABLE_SQLITE_MASTER_COLUMN_NAME = "name";
 
@@ -32,25 +39,46 @@ public final class SQLite {
     public static final String TYPENAME_BOOLEAN = "BOOLEAN";
 
     public static final String ESCAPE_CHAR = "'";
+    public static final String BOOLEAN_TRUE = "1";
+    public static final String BOOLEAN_FALSE = "0";
 
-//    public static String toString(Object value, String typeName) {
-//        String returnValue;
-//
-//        if (typeName.equals(SQLite.TYPENAME_INTEGER)) {
-//            returnValue = value.toString();
-//        } else if (typeName.equals(SQLite.TYPENAME_TEXT)) {
-//            returnValue = String.format("'%s'", value.toString().replaceAll("'", ESCAPE_CHAR + "'"));
-//        } else if (typeName.equals(SQLite.TYPENAME_BOOLEAN)) {
-//            returnValue = ((boolean) value) ? "1" : "0";
-//        } else if (typeName.equals(SQLite.TYPENAME_VARCHAR_255)) {
-//            returnValue = String.format("'%s'", value.toString().replaceAll("'", ESCAPE_CHAR + "'"));
-//        } else if (typeName.equals(SQLite.TYPENAME_DATETIME)) {
-//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//            returnValue = formatter.format(value);
-//        } else {
-//            throw new UnsupportedOperationException(String.format("String conversion for SQLite type name '%s' is not supported", typeName));
-//        }
-//
-//        return returnValue;
-//    }
+
+
+    public static String toString(Object value, String columnType) {
+        if (columnType.contains(SQLite.TYPENAME_INT)) {
+            return String.format("%d", value);
+        }
+        else if (columnType.contains(SQLite.TYPENAME_BLOB) || columnType.isEmpty()) {
+            byte[] byteArray = (byte[]) value;
+            StringBuilder builder = new StringBuilder();
+            for(byte b : byteArray) {
+                builder.append(String.format("%02x", b));
+            }
+            return String.format("X'%s'", builder.toString());
+        }
+        else if(columnType.contains("REA") || columnType.contains("FLOA") || columnType.contains("DOUB")) {
+            if (columnType.equals(SQLite.TYPENAME_FLOAT)) {
+                return Float.toString((float) value);
+            } else {
+                return Double.toString((double) value);
+            }
+        }
+        else if(columnType.contains("CHAR") || columnType.contains("CLOB") || columnType.contains("TEXT")) {
+            return String.format("'%s'", ((String) value).replaceAll("'", ESCAPE_CHAR + "'"));
+        }
+        else {
+            if (columnType.equals(SQLite.TYPENAME_DATE)) {
+                SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+                return String.format("'%s'", formatter.format((Date) value));
+            } else if (columnType.equals(SQLite.TYPENAME_DATETIME)) {
+                SimpleDateFormat formatter = new SimpleDateFormat(DATETIME_FORMAT);
+                return String.format("'%s'", formatter.format((Date) value));
+            } else if (columnType.equals(SQLite.TYPENAME_BOOLEAN)) {
+                return ((boolean) value) ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+            } else {
+                return String.valueOf(value);
+            }
+        }
+    }
+
 }

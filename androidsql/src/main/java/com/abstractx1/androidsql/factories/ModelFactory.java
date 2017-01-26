@@ -17,11 +17,7 @@ import java.util.TimeZone;
  * Created by tfisher on 29/12/2016.
  */
 //https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-public class ModelFactory {
-    public static final String GMT = "GMT";
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final String DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
-
+public class ModelFactory extends Factory {
     public static <T extends BaseModel> T build(Class<T> modelClazz, ColumnInfo columnInfo, Cursor cursor) throws IllegalAccessException, InstantiationException, ParseException, NoSuchFieldException {
         T model = modelClazz.newInstance();
 
@@ -130,7 +126,7 @@ public class ModelFactory {
     private static void setDateField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws IllegalAccessException, ParseException {
         String rawValue = cursor.getString(cursor.getColumnIndex(columnName));
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        SimpleDateFormat format = new SimpleDateFormat(SQLite.DATE_FORMAT);
         Date value = format.parse(rawValue);
         field.set(model, value);
     }
@@ -138,8 +134,8 @@ public class ModelFactory {
     private static void setDateTimeField(BaseModel model, Field field, String columnName, Cursor cursor)
             throws IllegalAccessException, ParseException {
         String rawValue = cursor.getString(cursor.getColumnIndex(columnName));
-        SimpleDateFormat format = new SimpleDateFormat(DATETIME_FORMAT);
-        format.setTimeZone(TimeZone.getTimeZone(GMT));
+        SimpleDateFormat format = new SimpleDateFormat(SQLite.DATETIME_FORMAT);
+        format.setTimeZone(TimeZone.getTimeZone(SQLite.GMT));
         Date value = format.parse(rawValue);
         field.set(model, value);
     }
@@ -149,17 +145,5 @@ public class ModelFactory {
         int rawValue = cursor.getInt(cursor.getColumnIndex(columnName));
         boolean value = rawValue > 0;
         field.setBoolean(model, value);
-    }
-
-    private static Field findFieldForColumnName(Class<? extends BaseModel> modelClazz, String columnName) {
-        Field[] fields = modelClazz.getDeclaredFields();
-        for (Field field : fields) {
-            Column columnAnnotation = field.getAnnotation(Column.class);
-            if (columnAnnotation != null && columnAnnotation.name().equals(columnName)) {
-                return field;
-            }
-        }
-
-        return null;
     }
 }
