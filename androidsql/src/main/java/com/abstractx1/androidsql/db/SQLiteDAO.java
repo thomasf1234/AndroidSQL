@@ -48,6 +48,10 @@ public class SQLiteDAO {
         }
     }
 
+//    public void update(String sql) {
+//        exec(sql);
+//    }
+
     public synchronized void initializeDatabase() {
         mySQLiteOpenHelper.getWritableDatabase();
     }

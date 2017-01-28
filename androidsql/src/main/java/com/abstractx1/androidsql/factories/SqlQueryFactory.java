@@ -59,7 +59,7 @@ public class SqlQueryFactory extends Factory {
         return query;
     }
 
-    public static String buildFindById(String tableName, int id) {
+    public static String buildFindById(String tableName, long id) {
         String query = String.format("SELECT * FROM " + tableName + " WHERE id = %d", id);
         return query;
     }

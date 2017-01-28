@@ -5,9 +5,15 @@ package com.abstractx1.androidsql;
  */
 
 public abstract class BaseModel {
-    @Column(name = "id", readOnly = true) protected long id;
+    public final static String COLUMN_ID = "id";
+
+    @Column(name = COLUMN_ID, readOnly = true) protected long id;
 
     public String getTableName() {
         return this.getClass().getAnnotation(TableName.class).value();
+    }
+
+    public boolean hasId() {
+        return id != 0;
     }
 }

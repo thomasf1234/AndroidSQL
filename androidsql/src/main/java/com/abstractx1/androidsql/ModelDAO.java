@@ -23,7 +23,7 @@ public class ModelDAO {
         this.tableInfo = new TableInfo(getSqLiteDAO());
     }
 
-    public <T extends BaseModel> T findById(Class<T> modelClazz, int id) throws NoSuchFieldException, InstantiationException, IllegalAccessException, ParseException {
+    public <T extends BaseModel> T findById(Class<T> modelClazz, long id) throws NoSuchFieldException, InstantiationException, IllegalAccessException, ParseException {
         String tableName = getTableName(modelClazz);
         String selectQuery = SqlQueryFactory.buildFindById(tableName, id);
         Cursor cursor = getSqLiteDAO().query(selectQuery);
@@ -37,10 +37,23 @@ public class ModelDAO {
         }
     }
 
-    public void save(BaseModel baseModel) throws IllegalAccessException {
-        String tableName = getTableName(baseModel.getClass());
-        String insertSql = SqlQueryFactory.buildInsert(baseModel, getColumnInfo(tableName));
-        getSqLiteDAO().insert(insertSql);
+    public <T extends BaseModel> T save(T model) throws IllegalAccessException, ParseException, NoSuchFieldException, InstantiationException {
+        String tableName = getTableName(model.getClass());
+
+        if (hasRecord(model)) {
+            //String updateSql = SqlQueryFactory.buildUpdate(model, getColumnInfo(tableName));
+            //getSqLiteDAO().insert(updateSql);
+            return null; //Not implemented
+        } else {
+            String insertSql = SqlQueryFactory.buildInsert(model, getColumnInfo(tableName));
+            long id = getSqLiteDAO().insert(insertSql);
+            T savedModel = (T) findById(model.getClass(), id);
+            return savedModel;
+        }
+    }
+
+    private boolean hasRecord(BaseModel model) {
+        return model.hasId();
     }
 
     private String getTableName(Class<? extends BaseModel>  modelClazz) {

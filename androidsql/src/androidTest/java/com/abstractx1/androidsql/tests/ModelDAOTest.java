@@ -40,10 +40,11 @@ public class ModelDAOTest extends BaseInstrumentedTest {
     public void testModelBuild_success() throws IllegalAccessException, ParseException, NoSuchFieldException, InstantiationException {
         Project project = new Project();
         project.setName("A test project");
+        assertEquals(0, project.getId());
+        assertEquals(null, project.getCreatedAt());
 
-        modelDAO.save(project);
+        Project savedProject = modelDAO.save(project);
 
-        Project savedProject = modelDAO.findById(Project.class, 1);
         assertNotNull(savedProject);
         assertEquals("A test project", savedProject.getName());
         assertEquals(1, savedProject.getId());
