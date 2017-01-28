@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public abstract class BaseInstrumentedTest {
+    public static final double DELTA_DOUBLE = 0.000000000000001;
+    public static final float DELTA_FLOAT = 0.000001f;
     protected static final String DB_NAME = "com.abstractx1.sqlitemodel.test.db";
     protected SQLiteDAO sqLiteDAO;
 

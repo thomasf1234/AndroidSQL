@@ -12,7 +12,6 @@ import java.util.Date;
 
 @TableName("test_table")
 public class TestModel extends BaseModel {
-    @Column(name = "id", readOnly = true) private long id;
     @Column(name = "byte_field") private byte byteField;
     @Column(name = "short_field") private short shortField;
     @Column(name = "int_field_a") private int intFieldA;
@@ -131,5 +130,85 @@ public class TestModel extends BaseModel {
 
     public void setByteField(byte byteField) {
         this.byteField = byteField;
+    }
+
+    public void setShortField(short shortField) {
+        this.shortField = shortField;
+    }
+
+    public void setIntFieldA(int intFieldA) {
+        this.intFieldA = intFieldA;
+    }
+
+    public void setIntFieldB(int intFieldB) {
+        this.intFieldB = intFieldB;
+    }
+
+    public void setLongField(long longField) {
+        this.longField = longField;
+    }
+
+    public void setStringFieldA(String stringFieldA) {
+        this.stringFieldA = stringFieldA;
+    }
+
+    public void setStringFieldB(String stringFieldB) {
+        this.stringFieldB = stringFieldB;
+    }
+
+    public void setStringFieldC(String stringFieldC) {
+        this.stringFieldC = stringFieldC;
+    }
+
+    public void setStringFieldD(String stringFieldD) {
+        this.stringFieldD = stringFieldD;
+    }
+
+    public void setStringFieldE(String stringFieldE) {
+        this.stringFieldE = stringFieldE;
+    }
+
+    public void setStringFieldF(String stringFieldF) {
+        this.stringFieldF = stringFieldF;
+    }
+
+    public void setStringFieldG(String stringFieldG) {
+        this.stringFieldG = stringFieldG;
+    }
+
+    public void setStringFieldH(String stringFieldH) {
+        this.stringFieldH = stringFieldH;
+    }
+
+    public void setByteArrayField(byte[] byteArrayField) {
+        this.byteArrayField = byteArrayField;
+    }
+
+    public void setDoubleFieldA(double doubleFieldA) {
+        this.doubleFieldA = doubleFieldA;
+    }
+
+    public void setDoubleFieldB(double doubleFieldB) {
+        this.doubleFieldB = doubleFieldB;
+    }
+
+    public void setDoubleFieldC(double doubleFieldC) {
+        this.doubleFieldC = doubleFieldC;
+    }
+
+    public void setFloatField(float floatField) {
+        this.floatField = floatField;
+    }
+
+    public void setBooleanField(boolean booleanField) {
+        this.booleanField = booleanField;
+    }
+
+    public void setDateField(Date dateField) {
+        this.dateField = dateField;
+    }
+
+    public void setDateTimeField(Date dateTimeField) {
+        this.dateTimeField = dateTimeField;
     }
 }

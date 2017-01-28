@@ -12,7 +12,6 @@ import java.util.Date;
 
 @TableName("projects")
 public class ProjectMissingField extends BaseModel {
-    @Column(name = "id", readOnly = true) private long id;
     @Column(name = "created_at", readOnly = true) private Date createdAt;
 
     public ProjectMissingField() {}

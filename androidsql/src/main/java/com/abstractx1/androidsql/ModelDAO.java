@@ -37,6 +37,12 @@ public class ModelDAO {
         }
     }
 
+    public void save(BaseModel baseModel) throws IllegalAccessException {
+        String tableName = getTableName(baseModel.getClass());
+        String insertSql = SqlQueryFactory.buildInsert(baseModel, getColumnInfo(tableName));
+        getSqLiteDAO().insert(insertSql);
+    }
+
     private String getTableName(Class<? extends BaseModel>  modelClazz) {
         return modelClazz.getAnnotation(TableName.class).value();
     }

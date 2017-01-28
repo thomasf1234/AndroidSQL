@@ -12,7 +12,6 @@ import java.util.Date;
 
 @TableName("projects")
 public class ProjectFieldIncorrectType extends BaseModel {
-    @Column(name = "id", readOnly = true) private long id;
     @Column(name = "name") private int name;
     @Column(name = "created_at", readOnly = true) private Date createdAt;
 

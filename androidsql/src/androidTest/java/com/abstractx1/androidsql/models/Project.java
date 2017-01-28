@@ -12,7 +12,6 @@ import java.util.Date;
 
 @TableName("projects")
 public class Project extends BaseModel {
-    @Column(name = "id", readOnly = true) private long id;
     @Column(name = "name") private String name;
     @Column(name = "created_at", readOnly = true) private Date createdAt;
 
@@ -28,5 +27,9 @@ public class Project extends BaseModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 }

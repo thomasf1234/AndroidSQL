@@ -45,8 +45,6 @@ public class ModelFactoryTestThorough extends BaseInstrumentedTest {
     static final long MIN_BIGINT = -9223372036854775808L;
 
     static final byte NULL_TERMINATOR = (byte) 0x00;
-    static final double DELTA_DOUBLE = 0.000000000000001;
-    static final float DELTA_FLOAT = 0.000001f;
 
     @Before
     public void setUp() {

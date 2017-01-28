@@ -14,7 +14,6 @@ import com.abstractx1.androidsql.factories.ModelFactory;
 import com.abstractx1.androidsql.models.Project;
 import com.abstractx1.androidsql.models.ProjectFieldIncorrectType;
 import com.abstractx1.androidsql.models.ProjectMissingField;
-import com.abstractx1.androidsql.models.ProjectPrimaryKeyInt;
 import com.abstractx1.androidsql.schemas.TestSchemaV1;
 
 import org.junit.Before;
@@ -80,18 +79,4 @@ public class ModelFactoryTest extends BaseInstrumentedTest {
             assertEquals("field com.abstractx1.androidsql.models.ProjectFieldIncorrectType.name has type int, got java.lang.String", e.getMessage());
         }
     }
-
-    @Test
-    public void testModelBuild_primaryKeyFieldIncorrectType() {
-        Cursor cursor = sqLiteDAO.query("SELECT * FROM projects WHERE name = 'MyDiary';");
-        TableInfo tableInfo = new TableInfo(sqLiteDAO);
-        try {
-            ModelFactory.build(ProjectPrimaryKeyInt.class, tableInfo.getColumnInfo("projects"), cursor);
-            fail("Should not have been able to produce incomplete model");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-            assertEquals("Invalid primitive conversion from long to int", e.getMessage());
-        }
-    }
-
 }
