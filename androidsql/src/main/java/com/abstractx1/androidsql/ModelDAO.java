@@ -41,9 +41,10 @@ public class ModelDAO {
         String tableName = getTableName(model.getClass());
 
         if (hasRecord(model)) {
-            //String updateSql = SqlQueryFactory.buildUpdate(model, getColumnInfo(tableName));
-            //getSqLiteDAO().insert(updateSql);
-            return null; //Not implemented
+            String updateSql = SqlQueryFactory.buildUpdate(model, getColumnInfo(tableName));
+            getSqLiteDAO().exec(updateSql);
+            T savedModel = (T) findById(model.getClass(), model.getId());
+            return savedModel;
         } else {
             String insertSql = SqlQueryFactory.buildInsert(model, getColumnInfo(tableName));
             long id = getSqLiteDAO().insert(insertSql);

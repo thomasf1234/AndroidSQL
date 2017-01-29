@@ -55,7 +55,48 @@ public class SqlQueryFactory extends Factory {
             }
         }
 
-        String query =  "INSERT INTO " + model.getTableName() + " (" + columns + ") " + "VALUES (" + values + ")";
+        String query = "INSERT INTO " + model.getTableName() + " (" + columns + ") " + "VALUES (" + values + ")";
+        return query;
+    }
+
+    public static String buildUpdate(BaseModel model, ColumnInfo columnInfo) throws IllegalAccessException {
+        StringBuilder updates = new StringBuilder();
+
+        boolean isFirst = true;
+        for (String columnName : columnInfo.getColumnNames()) {
+            Field field = findFieldForColumnName(model.getClass(), columnName);
+
+            if (isColumnReadOnly(field)) {
+                continue;
+            } else {
+                String typeName = columnInfo.getTypeName(columnName);
+                boolean origAccessibility = field.isAccessible();
+                Object fieldValue;
+
+                try {
+                    field.setAccessible(true);
+                    fieldValue = field.get(model);
+                } catch (IllegalAccessException e) {
+                    throw e;
+                } finally {
+                    field.setAccessible(origAccessibility);
+                }
+
+                String value = SQLite.toString(fieldValue, typeName);
+
+                if (isFirst) {
+                    isFirst = false;
+                    updates.append(String.format("%s = %s", columnName, value));
+                } else {
+                    updates.append(String.format(", %s = %s", columnName, value));
+                }
+            }
+
+        }
+
+        String idString = SQLite.toString(model.getId(), SQLite.TYPENAME_BIGINT);
+
+        String query = "UPDATE " + model.getTableName() + " SET " + updates + " WHERE id = " + idString;
         return query;
     }
 
@@ -72,6 +113,4 @@ public class SqlQueryFactory extends Factory {
         Column columnAnnotation = field.getAnnotation(Column.class);
         return columnAnnotation.readOnly();
     }
-
-
 }

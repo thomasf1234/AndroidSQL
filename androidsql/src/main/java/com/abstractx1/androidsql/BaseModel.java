@@ -16,4 +16,8 @@ public abstract class BaseModel {
     public boolean hasId() {
         return id != 0;
     }
+
+    public long getId() {
+        return id;
+    }
 }

@@ -48,17 +48,13 @@ public class SQLiteDAO {
         }
     }
 
-//    public void update(String sql) {
-//        exec(sql);
-//    }
+    public synchronized void exec(String sql) {
+        Log.v("DEBUG", String.format("Executing SQL: %s", sql));
+        mySQLiteOpenHelper.getWritableDatabase().execSQL(sql);
+    }
 
     public synchronized void initializeDatabase() {
         mySQLiteOpenHelper.getWritableDatabase();
-    }
-
-    private synchronized void exec(String sql) {
-        Log.v("DEBUG", String.format("Executing SQL: %s", sql));
-        mySQLiteOpenHelper.getWritableDatabase().execSQL(sql);
     }
 
     private class MySQLiteOpenHelper extends SQLiteOpenHelper {

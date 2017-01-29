@@ -6,12 +6,15 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.abstractx1.androidsql.BaseInstrumentedTest;
+import com.abstractx1.androidsql.ModelDAO;
 import com.abstractx1.androidsql.TableInfo;
 import com.abstractx1.androidsql.db.SQLiteDAO;
 import com.abstractx1.androidsql.db.Schema;
 import com.abstractx1.androidsql.factories.SqlQueryFactory;
 import com.abstractx1.androidsql.models.Project;
+import com.abstractx1.androidsql.schemas.TestSchemaMultipleTablesV1;
 import com.abstractx1.androidsql.schemas.TestSchemaV1;
+import com.abstractx1.androidsql.schemas.TestSchemaV2;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +33,7 @@ public class SqlQueryFactoryTest extends BaseInstrumentedTest {
     @Before
     public void setUp() {
         Context appContext = InstrumentationRegistry.getTargetContext();
-        Schema schema = new TestSchemaV1();
+        Schema schema = new TestSchemaMultipleTablesV1();
         this.sqLiteDAO = new SQLiteDAO(appContext, DB_NAME, schema);
         sqLiteDAO.initializeDatabase();
     }
@@ -47,5 +50,37 @@ public class SqlQueryFactoryTest extends BaseInstrumentedTest {
         } catch (Exception e) {
             fail(Log.getStackTraceString(e));
         }
+    }
+
+    @Test
+    public void testBuildUpdate_projectSuccess() throws IllegalAccessException {
+        long id = sqLiteDAO.insert("INSERT INTO projects (name) VALUES ('MyProject')");
+        TableInfo tableInfo = new TableInfo(sqLiteDAO);
+        Project project = new Project();
+        project.setId(id);
+        project.setName("MyUpdatedProject");
+
+        try {
+            String sql = SqlQueryFactory.buildUpdate(project, tableInfo.getColumnInfo(project.getTableName()));
+            assertEquals(String.format("UPDATE projects SET name = 'MyUpdatedProject' WHERE id = %d", id), sql);
+        } catch (Exception e) {
+            fail(Log.getStackTraceString(e));
+        }
+    }
+
+    @Test
+    public void testBuildUpdate_taskSuccess() throws IllegalAccessException {
+//        Mode
+//        TableInfo tableInfo = new TableInfo(sqLiteDAO);
+//        Project project = new Project();
+//        project.setId(id);
+//        project.setName("MyUpdatedProject");
+//
+//        try {
+//            String sql = SqlQueryFactory.buildUpdate(project, tableInfo.getColumnInfo(project.getTableName()));
+//            assertEquals(String.format("UPDATE projects SET name = 'MyUpdatedProject' WHERE id = %d", id), sql);
+//        } catch (Exception e) {
+//            fail(Log.getStackTraceString(e));
+//        }
     }
 }
