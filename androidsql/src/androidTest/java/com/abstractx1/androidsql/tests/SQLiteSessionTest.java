@@ -40,10 +40,11 @@ public class SQLiteSessionTest extends BaseInstrumentedTest {
     public void testInsert() {
         int id = (int) sqLiteDAO.insert("INSERT INTO projects (name) VALUES ('MyOther''s Project')");
         Cursor cursor = sqLiteDAO.query("SELECT COUNT(*) FROM projects");
+        cursor.moveToFirst();
         assertEquals(1, cursor.getInt(0));
         cursor.close();
         cursor = sqLiteDAO.query(String.format("SELECT * FROM projects WHERE id = %d", id));
-        assertNotNull(cursor);
+        cursor.moveToFirst();
         assertEquals("MyOther's Project", cursor.getString(cursor.getColumnIndex("name")));
         cursor.close();
     }
@@ -66,7 +67,7 @@ public class SQLiteSessionTest extends BaseInstrumentedTest {
                 int id = entry.getKey();
                 String name = entry.getValue();
                 Cursor cursor = sqLiteDAO.query(String.format("SELECT name FROM projects WHERE id = %d", id));
-                assertNotNull(cursor);
+                cursor.moveToFirst();
                 assertEquals(name, cursor.getString(cursor.getColumnIndex("name")));
                 cursor.close();
             }

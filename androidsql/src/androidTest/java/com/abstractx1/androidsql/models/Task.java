@@ -10,14 +10,14 @@ import java.util.Date;
  * Created by tfisher on 25/01/2017.
  */
 
-@TableName("projects")
+@TableName("tasks")
 public class Task extends BaseModel {
     @Column(name = "number") private int number;
     @Column(name = "title") private String title;
     @Column(name = "description") private String description;
     @Column(name = "type") private String type;
     @Column(name = "status") private String status;
-    @Column(name = "project_id") private int project_id;
+    @Column(name = "project_id") private long project_id;
     @Column(name = "created_at", readOnly = true) private Date createdAt;
 
     public Task() {}
@@ -66,11 +66,11 @@ public class Task extends BaseModel {
         this.status = status;
     }
 
-    public int getProject_id() {
+    public long getProjectId() {
         return project_id;
     }
 
-    public void setProject_id(int project_id) {
+    public void setProjectId(long project_id) {
         this.project_id = project_id;
     }
 }

@@ -25,12 +25,12 @@ public class TestSchemaMultipleTablesV1 extends Schema {
 
                 "CREATE TABLE tasks(\n" +
                         "   id INTEGER PRIMARY KEY AUTOINCREMENT     NOT NULL,\n" +
-                        "   number INTEGER NOT NULL,\n" +
+                        "   number INT NOT NULL,\n" +
                         "   title TEXT NOT NULL,\n" +
-                        "   description           TEXT    NOT NULL,\n" +
+                        "   description           TEXT,\n" +
                         "   type          VARCHAR(255)    NOT NULL,\n" +
                         "   status        VARCHAR(255)    NOT NULL,\n" +
-                        "   project_id INTEGER NOT NULL,\n" +
+                        "   project_id BIGINT NOT NULL,\n" +
                         "   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
                         "   CONSTRAINT uq_project_id_task_number UNIQUE(project_id, number),\n" +
                         "   FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE\n" +

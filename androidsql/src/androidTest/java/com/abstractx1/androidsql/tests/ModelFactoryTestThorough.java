@@ -80,6 +80,7 @@ public class ModelFactoryTestThorough extends BaseInstrumentedTest {
         sqLiteDAO.insert(insertSql);
 
         Cursor cursor = sqLiteDAO.query("SELECT * FROM test_table LIMIT 1;");
+        cursor.moveToFirst();
         TableInfo tableInfo = new TableInfo(sqLiteDAO);
         try {
             TestModel testModel = ModelFactory.build(TestModel.class, tableInfo.getColumnInfo("test_table"), cursor);
@@ -151,6 +152,7 @@ public class ModelFactoryTestThorough extends BaseInstrumentedTest {
         sqLiteDAO.insert(insertSql);
 
         Cursor cursor = sqLiteDAO.query("SELECT * FROM test_table LIMIT 1;");
+        cursor.moveToFirst();
         TableInfo tableInfo = new TableInfo(sqLiteDAO);
         try {
             TestModel testModel = ModelFactory.build(TestModel.class, tableInfo.getColumnInfo("test_table"), cursor);

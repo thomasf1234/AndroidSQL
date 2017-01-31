@@ -18,7 +18,6 @@ public final class SQLite {
     public static final String TABLE_INFO_COLUMN_NAME = "name";
     public static final String TABLE_INFO_COLUMN_TYPE = "type";
 
-
     public static final String TYPENAME_TINYINT = "TINYINT";
     public static final String TYPENAME_SMALLINT = "SMALLINT";
     public static final String TYPENAME_MEDIUMINT = "MEDIUMINT";
@@ -39,13 +38,18 @@ public final class SQLite {
     public static final String TYPENAME_BOOLEAN = "BOOLEAN";
 
     public static final String ESCAPE_CHAR = "'";
+
     public static final String BOOLEAN_TRUE = "1";
     public static final String BOOLEAN_FALSE = "0";
+    public static final String NULL = "NULL";
 
 
 
     public static String toString(Object value, String columnType) {
-        if (columnType.contains(SQLite.TYPENAME_INT)) {
+        if (value == null) {
+            return NULL;
+        }
+        else if (columnType.contains(SQLite.TYPENAME_INT)) {
             return String.format("%d", value);
         }
         else if (columnType.contains(SQLite.TYPENAME_BLOB) || columnType.isEmpty()) {

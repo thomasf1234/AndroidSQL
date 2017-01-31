@@ -104,11 +104,13 @@ public class SchemaTest extends BaseInstrumentedTest {
         Cursor cursor = sqLiteDAO.query("SELECT name FROM sqlite_master WHERE type ='table'");
         List<String> tableNames = new ArrayList<>();
 
-        if (cursor != null) {
-            do {
-                tableNames.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-
+        try {
+            if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+                do {
+                    tableNames.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+        } finally {
             cursor.close();
         }
 
@@ -122,10 +124,15 @@ public class SchemaTest extends BaseInstrumentedTest {
         List<String> actualColumns = new ArrayList<>();
 
         Cursor cursor = sqLiteDAO.query(String.format("PRAGMA table_info(%s)", tableName));
-        do {
-            actualColumns.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
-        } while (cursor.moveToNext());
-        cursor.close();
+        try {
+            if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+                do {
+                    actualColumns.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+        }
 
         return  actualColumns;
     }

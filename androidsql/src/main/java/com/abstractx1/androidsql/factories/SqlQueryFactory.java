@@ -100,8 +100,28 @@ public class SqlQueryFactory extends Factory {
         return query;
     }
 
+    public static String buildFindAll(String tableName) {
+        String query = "SELECT * FROM " + tableName;
+        return query;
+    }
+
+    public static String buildRawQuery(String tableName, String rawClauses) {
+        String query = "SELECT * FROM " + tableName + " " + rawClauses;
+        return query;
+    }
+
+    public static String buildRawWhere(String tableName, String rawWhereClause) {
+        String query = buildRawQuery(tableName, "WHERE " + rawWhereClause);
+        return query;
+    }
+
     public static String buildFindById(String tableName, long id) {
-        String query = String.format("SELECT * FROM " + tableName + " WHERE id = %d", id);
+        String query = buildRawWhere(tableName, String.format("id = %d LIMIT 1", id));
+        return query;
+    }
+
+    public static String buildDeleteById(String tableName, long id) {
+        String query = String.format("DELETE FROM " + tableName + " WHERE id = %d", id);
         return query;
     }
 

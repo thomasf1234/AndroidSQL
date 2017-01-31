@@ -27,11 +27,7 @@ public class SQLiteDAO {
     public Cursor query(String sql) {
         Log.v("DEBUG", String.format("Querying SQL: %s", sql));
         Cursor cursor = mySQLiteOpenHelper.getReadableDatabase().rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            return cursor;
-        } else {
-            return null;
-        }
+        return cursor;
     }
 
     //synchronized here is required to ensure correct id is retrieved.
@@ -39,12 +35,17 @@ public class SQLiteDAO {
     public synchronized long insert(String sql) {
         exec(sql);
         Cursor cursor = query("SELECT LAST_INSERT_ROWID() AS id");
-        if (cursor == null) {
-            throw new RuntimeException("Unable to query LAST_INSERT_ROWID()");
-        } else {
-            long id = cursor.getLong(cursor.getColumnIndex("id"));
-            Log.v("DEBUG", String.format("Last insert_rowid: %d", id));
-            return id;
+
+        try {
+            if (cursor.getCount() > 0 && cursor.moveToFirst()) {
+                long id = cursor.getLong(cursor.getColumnIndex("id"));
+                Log.v("DEBUG", String.format("Last insert_rowid: %d", id));
+                return id;
+            } else {
+                throw new RuntimeException("Unable to query LAST_INSERT_ROWID()");
+            }
+        } finally {
+            cursor.close();
         }
     }
 
@@ -55,6 +56,10 @@ public class SQLiteDAO {
 
     public synchronized void initializeDatabase() {
         mySQLiteOpenHelper.getWritableDatabase();
+    }
+
+    public void close() {
+        mySQLiteOpenHelper.close();
     }
 
     private class MySQLiteOpenHelper extends SQLiteOpenHelper {

@@ -43,6 +43,7 @@ public class ModelFactoryTest extends BaseInstrumentedTest {
     @Test
     public void testModelBuild_success() {
         Cursor cursor = sqLiteDAO.query("SELECT * FROM projects WHERE name = 'MyDiary';");
+        cursor.moveToFirst();
         TableInfo tableInfo = new TableInfo(sqLiteDAO);
         try {
             Project project = ModelFactory.build(Project.class, tableInfo.getColumnInfo("projects"), cursor);
@@ -57,6 +58,7 @@ public class ModelFactoryTest extends BaseInstrumentedTest {
     @Test
     public void testModelBuild_missingField() {
         Cursor cursor = sqLiteDAO.query("SELECT * FROM projects WHERE name = 'MyDiary';");
+        cursor.moveToFirst();
         TableInfo tableInfo = new TableInfo(sqLiteDAO);
         try {
             ModelFactory.build(ProjectMissingField.class, tableInfo.getColumnInfo("projects"), cursor);
@@ -70,6 +72,7 @@ public class ModelFactoryTest extends BaseInstrumentedTest {
     @Test
     public void testModelBuild_fieldIncorrectType() {
         Cursor cursor = sqLiteDAO.query("SELECT * FROM projects WHERE name = 'MyDiary';");
+        cursor.moveToFirst();
         TableInfo tableInfo = new TableInfo(sqLiteDAO);
         try {
             ModelFactory.build(ProjectFieldIncorrectType.class, tableInfo.getColumnInfo("projects"), cursor);
